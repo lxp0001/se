@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>React：活动报名列表</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--text:#1f2328;--mute:#656d76;--line:#d8dce1;--blue:#2563eb;--green:#16a34a;--orange:#d97706;--code:#f0f2f5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14171a;--card:#1d2125;--text:#e6e8ea;--mute:#9aa4ad;--line:#2f353b;--blue:#6ea0ff;--green:#4ade80;--orange:#fbbf24;--code:#12151a}}
+:root[data-theme="dark"]{--bg:#14171a;--card:#1d2125;--text:#e6e8ea;--mute:#9aa4ad;--line:#2f353b;--blue:#6ea0ff;--green:#4ade80;--orange:#fbbf24;--code:#12151a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",Arial,sans-serif}
+main{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;margin:0 0 6px}
+.lead{color:var(--mute);margin:0 0 16px}
+.note{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:8px;padding:10px 14px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0}
+.card h2{font-size:16px;margin:0 0 10px}
+.card.n h2{color:var(--blue)}.card.r h2{color:var(--green)}
+label{display:block;margin-bottom:6px;color:var(--mute)}
+.sum{margin:0 0 8px;font-weight:600}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
+li .name{flex:1}.cnt{color:var(--mute);font-variant-numeric:tabular-nums}
+.tag{font-size:12px;color:#fff;background:var(--orange);border-radius:4px;padding:0 6px}
+button{font:inherit;padding:4px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--text);cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+[hidden]{display:none!important}
+details{margin-top:10px}summary{cursor:pointer;color:var(--mute)}
+pre{margin:8px 0 0;padding:10px;background:var(--code);border-radius:8px;overflow-x:auto;font:12.5px/1.55 ui-monospace,Consolas,monospace}
+</style>
+</head>
+<body>
+<main>
+<h1>React</h1>
+<p class="lead">活动报名列表：功能和原生版完全相同。只描述"数据是这样时，页面长这样"，数据变了，页面由 React 更新。需要联网加载 React。</p>
+<section class="card r">
+<div id="root"></div>
+</section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.26.4/babel.min.js"></script>
+<script id="r-code" type="text/babel">
+const { useState } = React;
+const init = [
+  { id: 1, name: "算法入门讲座", cap: 3, n: 2, mine: false },
+  { id: 2, name: "摄影社团招新", cap: 50, n: 12, mine: false },
+  { id: 3, name: "篮球友谊赛", cap: 2, n: 2, mine: false },
+];
+
+function App() {
+  const [events, setEvents] = useState(init);
+  const [onlyOpen, setOnlyOpen] = useState(false);
+
+  const toggle = id => setEvents(events.map(e =>
+    e.id !== id ? e : { ...e, mine: !e.mine, n: e.n + (e.mine ? -1 : 1) }));
+
+  const shown = events.filter(e => !onlyOpen || e.n < e.cap);
+
+  return (
+    <div>
+      <label>
+        <input type="checkbox" checked={onlyOpen}
+               onChange={ev => setOnlyOpen(ev.target.checked)} /> 只看还有名额的
+      </label>
+      <p className="sum">我已报名 {events.filter(e => e.mine).length} 个活动</p>
+      <ul>
+        {shown.map(e => (
+          <li key={e.id}>
+            <span className="name">{e.name}</span>
+            <span className="cnt">{e.n}/{e.cap}</span>
+            {e.n >= e.cap && <span className="tag">已满</span>}
+            <button disabled={!e.mine && e.n >= e.cap} onClick={() => toggle(e.id)}>
+              {e.mine ? "取消报名" : "报名"}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
