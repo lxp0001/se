@@ -1,4 +1,4 @@
-name: 04-1 自动编译与容器构建
+name: 04-1 自动编译、API 测试与容器构建
 
 on:
   push:
@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    name: 编译前端并构建 Docker 镜像
+    name: 编译前端、测试 API 并构建 Docker 镜像
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -36,6 +36,17 @@ jobs:
       - name: 自动编译 React 页面
         working-directory: stage-04/04-1-Docker打包与本地运行/starter/app/frontend
         run: npm run build
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 安装 API 和测试依赖
+        run: pip install -r backend/requirements.txt -r backend/requirements-test.txt
+
+      - name: 运行 API 测试
+        run: pytest backend/tests -q
 
       - name: 检查 Compose 配置
         run: docker compose config --quiet

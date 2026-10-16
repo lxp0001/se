@@ -1,6 +1,6 @@
 # 任务 04-3：Railway 持续部署
 
-CI 已能检查前端与容器构建。本任务使用 Railway 部署阶段 03 的 React 页面和阶段 02 的 FastAPI API：先手动确认服务可用，再开启自动部署，并让 Railway 等待 GitHub Actions 检查通过后才发布新版本。
+CI 已能检查前端与容器构建。本阶段的工作流还没有运行 Python API 行为测试；阶段 05 会把 pytest 接入同一条 CI 工作流。届时 Railway 的 **Wait for CI** 会等待新增的 API 测试也通过，再部署新版本。本任务使用 Railway 部署阶段 03 的 React 页面和阶段 02 的 FastAPI API：先手动确认服务可用，再开启自动部署。
 
 ## 完成后你应该能够
 
@@ -36,9 +36,9 @@ Railway 项目中的服务可通过私有网络互相访问；要使用实际服
 
 GitHub Pages 是静态站点，不能通过 Railway 私有网络访问 `api`。如果使用 `.github/workflows/04-1-pages.yml` 部署前端，需要让 API 可通过 HTTPS 公网域名访问，并限制跨域来源：
 
-1. 在 `api` 服务的 Variables 中设置 `CORS_ORIGINS=https://lxp0001.github.io`。API 只允许这个 Pages 站点来源跨域请求。
+1. 在 `api` 服务的 Variables 中设置 `CORS_ORIGINS=https://<GitHub 用户名>.github.io`，将占位内容替换为实际 Pages 域名的用户名。API 只允许配置的 Pages 来源跨域请求；不要把仓库路径（例如 `/se/`）写入来源。
 2. 在 `api` 服务的 Settings → Networking → Public Networking 中选择 **Generate Domain**，记录 Railway 分配的 HTTPS 域名。API 因此可以从公网访问；不要在 API 中放置密钥或管理接口。
-3. 前端 Pages 构建默认使用 `https://se-production-2cc7.up.railway.app`。如果换了 API 域名，可在 GitHub 仓库 Settings → Secrets and variables → Actions → Variables 中设置 `VITE_API_BASE_URL` 覆盖它，不要在域名末尾添加 `/`。
+3. 前端 Pages 构建当前默认使用课程示例域名 `https://se-production-2cc7.up.railway.app`。如果复制仓库后使用了自己的 API 域名，在对应 GitHub 仓库 **Settings → Secrets and variables → Actions → Variables** 中设置 `VITE_API_BASE_URL`，值填自己的 HTTPS 域名，不要在域名末尾添加 `/`。Pages 地址和仓库名的关系见[GitHub Pages 前端部署说明](../GitHub-Pages前端部署.md)。
 4. 重新运行 **部署前端到 GitHub Pages** 工作流。
 5. 用 `https://<API 域名>/events` 检查 API 是否可访问，再从 Pages 页面测试报名功能。
 
@@ -74,7 +74,7 @@ Railway 项目与服务配置说明（不含变量值）
 
 ## 完成检查
 
-- [ ] `web` 有公网域名，`api` 只通过 Railway 私有网络访问。
+- [ ] 若前端也部署在 Railway，`web` 有公网域名且 `api` 只通过私有网络访问；若前端部署在 GitHub Pages，则 API 有公网域名并配置了精确的 `CORS_ORIGINS`。
 - [ ] 前端可以读取并管理报名记录，API 数据库挂载到 `/data` 持久化卷。
 - [ ] GitHub Actions 检查成功后 Railway 才部署；检查失败时不会部署失败版本。
 - [ ] 能在 Railway 中找到对应提交的部署记录与日志。

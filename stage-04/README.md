@@ -10,7 +10,7 @@
 
 ## CI/CD 在本阶段的意思
 
-- **CI（持续集成）**：提交代码后自动构建并运行检查。本阶段以 React 生产构建、Compose 配置验证和容器镜像构建作为基础检查。
+- **CI（持续集成）**：提交代码后自动构建并运行检查。阶段 04 先检查 React 生产构建、Compose 配置和容器镜像构建；后端 Python 依赖会在镜像构建时安装，但此时还没有运行 API 行为测试。阶段 05 再加入 pytest 测试，并扩展同一条 CI 工作流。
 - **CD（持续交付/部署）**：检查通过后，把版本交付或部署到环境。本阶段先手动验证一次，再让 Railway 等待 GitHub Actions 检查成功后自动部署到教学演示环境。
 - 生产环境可以增加人工审批；本阶段不要求学生自动发布到真实生产服务。
 
@@ -23,7 +23,11 @@
 
 ## 学习顺序
 
-本地 Compose 可运行 → Actions 自动检查 → Railway 等 CI 通过 → 自动部署前后端服务 → 查看在线应用与部署日志。
+本地 Compose 可运行 → Actions 检查前端构建与镜像 → 阶段 05 加入 API 测试 → Railway 等全部 CI 检查通过后部署 → 查看在线应用与部署日志。
+
+部署失败或前后端联调遇到问题时，参阅[阶段 04 故障排查手册](故障排查手册.md)。
+
+如需分开部署前后端，可按这两份说明操作：[GitHub Pages 前端部署](GitHub-Pages前端部署.md)和[Railway 后端部署](Railway后端部署.md)。
 
 Railway 不会直接运行 Compose 文件；本地 Compose 用于开发验证，部署时把 Compose 中的前端、API 服务分别配置为 Railway 服务。[Railway 的 Compose 部署说明](https://docs.railway.com/guides/docker-compose)
 
