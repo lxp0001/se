@@ -18,19 +18,31 @@ CI 已能检查前端与容器构建。本任务使用 Railway 部署阶段 03 �
 ## 第一步：部署 API 服务
 
 1. 在 Railway 新建空项目，并添加来自 GitHub 仓库的服务，命名为 `api`。
-2. 将服务根目录设为 `app/backend`，让 Railway 使用其中的 Dockerfile 构建。
+2. 将服务根目录设为 `/stage-04/04-1-Docker打包与本地运行/starter/app/backend`，让 Railway 使用其中的 Dockerfile 构建。
 3. 在 Variables 中设置 `DATABASE_PATH=/data/registrations.db`。
 4. 在服务的 Volumes 中添加持久化卷，挂载路径填写 `/data`。
 5. API 只供项目内服务访问，不生成公网域名。确认 FastAPI 在容器内监听 `0.0.0.0:8000`。
 
 ## 第二步：部署前端服务
 
-1. 添加另一个来自同一 GitHub 仓库的服务，命名为 `web`，根目录设为 `app/frontend`。
+1. 添加另一个来自同一 GitHub 仓库的服务，命名为 `web`，根目录设为 `/stage-04/04-1-Docker打包与本地运行/starter/app/frontend`。
 2. 在 Variables 中设置 `API_ORIGIN=http://api.railway.internal:8000`。Nginx 配置会把网页发来的 `/api/` 请求转发给项目内的 API 服务。
 3. 为 `web` 服务生成公网域名；不要为 API 服务开放公网入口。
 4. 访问网页，完成查看活动和报名记录的 CRUD 验证；查看两个服务的部署日志。
 
 Railway 项目中的服务可通过私有网络互相访问；要使用实际服务名和应用监听端口。参考 [Railway 私有网络与 Compose 服务映射](https://docs.railway.com/guides/docker-compose)。
+
+## 如果前端部署在 GitHub Pages
+
+GitHub Pages 是静态站点，不能通过 Railway 私有网络访问 `api`。如果使用 `.github/workflows/04-1-pages.yml` 部署前端，需要让 API 可通过 HTTPS 公网域名访问，并限制跨域来源：
+
+1. 在 `api` 服务的 Variables 中设置 `CORS_ORIGINS=https://lxp0001.github.io`。API 只允许这个 Pages 站点来源跨域请求。
+2. 在 `api` 服务的 Settings → Networking → Public Networking 中选择 **Generate Domain**，记录 Railway 分配的 HTTPS 域名。API 因此可以从公网访问；不要在 API 中放置密钥或管理接口。
+3. 在 GitHub 仓库 Settings → Secrets and variables → Actions → Variables 中新增 `VITE_API_BASE_URL`，值填写 Railway API 域名，例如 `https://your-api.up.railway.app`，不要在末尾添加 `/`。
+4. 重新运行 **部署前端到 GitHub Pages** 工作流，让域名编译进前端文件。
+5. 用 `https://<API 域名>/events` 检查 API 是否可访问，再从 Pages 页面测试报名功能。
+
+如需后续将 API 改为私有网络服务，需要将前端改为 Railway 上的 `web` 服务，并由 Nginx 通过 `API_ORIGIN` 转发请求；GitHub Pages 无法连接 Railway 私有域名。
 
 ## 第三步：设置“先 CI，后部署”
 

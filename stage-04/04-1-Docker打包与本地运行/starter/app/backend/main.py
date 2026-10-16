@@ -5,12 +5,25 @@ import sqlite3
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 
 DATABASE_PATH = Path(os.getenv("DATABASE_PATH", "registrations.db"))
 DATABASE_PATH.parent.mkdir(parents=True, exist_ok=True)
 app = FastAPI(title="活动报名 API")
+CORS_ORIGINS = [
+    origin.strip().rstrip("/")
+    for origin in os.getenv("CORS_ORIGINS", "").split(",")
+    if origin.strip()
+]
+if CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=CORS_ORIGINS,
+        allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=["Content-Type"],
+    )
 
 
 class RegistrationInput(BaseModel):
