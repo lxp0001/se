@@ -1,6 +1,6 @@
 # 任务 04-1：Docker 打包与本地运行
 
-完成阶段 02 的 FastAPI API 和阶段 03 的 React 页面后，把它们组合成一个可重复运行的应用。先在自己电脑上手动启动 Compose；本任务不要求上传镜像或部署到公网。
+本目录提供了一份完整的活动报名示例代码（FastAPI + SQLite、React 和 Docker Compose），可以先直接运行，再对照阶段 02、03 的项目理解容器化。也可以把你自己完成的后端和 React 页面放入对应目录。先在自己电脑上手动启动 Compose；本任务不要求上传镜像或部署到公网。
 
 ## 完成后你应该能够
 
@@ -10,7 +10,7 @@
 
 ## 开始前
 
-安装 Docker Desktop（Windows/macOS）或 Docker Engine 与 Compose 插件（Linux）。确认 Docker 正在运行。将已完成的 React 项目放入 `app/frontend`，FastAPI 项目放入 `app/backend`，然后把本目录 `starter/app` 中的配置文件复制到相应位置（包括 `.dockerignore`）。将阶段 00 的任务总结模板复制为本任务的 `任务总结.md`。
+安装 Docker Desktop（Windows/macOS）或 Docker Engine 与 Compose 插件（Linux）。确认 Docker 正在运行。先将 `starter/app` 复制到自己的 04-1 任务目录，在 `app/frontend` 执行一次 `npm install`，生成并保留 `package-lock.json`，再运行示例；如要使用自己完成的项目，再将 React 项目放入 `app/frontend`、FastAPI 项目放入 `app/backend`，保留 Dockerfile、Compose、Nginx 配置及 `.dockerignore`。将阶段 00 的任务总结模板复制为本任务的 `任务总结.md`。
 
 目录结构：
 
@@ -37,7 +37,7 @@ app/
 
 ## 第二步：本地手动启动
 
-在 `app` 目录执行：
+在 `app` 目录执行（首次构建需要下载前后端依赖，请保持网络可用）：
 
 ```powershell
 docker compose up --build

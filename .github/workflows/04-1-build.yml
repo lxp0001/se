@@ -1,0 +1,44 @@
+name: 04-1 自动编译与容器构建
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'se/stage-04/04-1-Docker打包与本地运行/starter/app/**'
+      - '.github/workflows/04-1-build.yml'
+  pull_request:
+    paths:
+      - 'se/stage-04/04-1-Docker打包与本地运行/starter/app/**'
+      - '.github/workflows/04-1-build.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: 编译前端并构建 Docker 镜像
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: se/stage-04/04-1-Docker打包与本地运行/starter/app
+
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 安装前端依赖
+        working-directory: se/stage-04/04-1-Docker打包与本地运行/starter/app/frontend
+        run: npm install --no-audit --no-fund
+
+      - name: 自动编译 React 页面
+        working-directory: se/stage-04/04-1-Docker打包与本地运行/starter/app/frontend
+        run: npm run build
+
+      - name: 检查 Compose 配置
+        run: docker compose config --quiet
+
+      - name: 构建前端和 API 镜像
+        run: docker compose build
