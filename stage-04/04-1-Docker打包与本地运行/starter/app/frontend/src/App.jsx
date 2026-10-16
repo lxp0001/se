@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '');
+const PAGES_API_BASE_URL = 'https://se-production-2cc7.up.railway.app';
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.MODE === 'github-pages' ? PAGES_API_BASE_URL : '')
+).replace(/\/+$/, '');
 
 async function request(path, options) {
   if (import.meta.env.MODE === 'github-pages' && !API_BASE_URL) {

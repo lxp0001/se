@@ -38,8 +38,8 @@ GitHub Pages 是静态站点，不能通过 Railway 私有网络访问 `api`。�
 
 1. 在 `api` 服务的 Variables 中设置 `CORS_ORIGINS=https://lxp0001.github.io`。API 只允许这个 Pages 站点来源跨域请求。
 2. 在 `api` 服务的 Settings → Networking → Public Networking 中选择 **Generate Domain**，记录 Railway 分配的 HTTPS 域名。API 因此可以从公网访问；不要在 API 中放置密钥或管理接口。
-3. 在 GitHub 仓库 Settings → Secrets and variables → Actions → Variables 中新增 `VITE_API_BASE_URL`，值填写 Railway API 域名，例如 `https://your-api.up.railway.app`，不要在末尾添加 `/`。
-4. 重新运行 **部署前端到 GitHub Pages** 工作流，让域名编译进前端文件。
+3. 前端 Pages 构建默认使用 `https://se-production-2cc7.up.railway.app`。如果换了 API 域名，可在 GitHub 仓库 Settings → Secrets and variables → Actions → Variables 中设置 `VITE_API_BASE_URL` 覆盖它，不要在域名末尾添加 `/`。
+4. 重新运行 **部署前端到 GitHub Pages** 工作流。
 5. 用 `https://<API 域名>/events` 检查 API 是否可访问，再从 Pages 页面测试报名功能。
 
 如需后续将 API 改为私有网络服务，需要将前端改为 Railway 上的 `web` 服务，并由 Nginx 通过 `API_ORIGIN` 转发请求；GitHub Pages 无法连接 Railway 私有域名。
