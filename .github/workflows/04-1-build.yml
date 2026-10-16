@@ -4,11 +4,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'se/stage-04/04-1-Docker打包与本地运行/starter/app/**'
+      - 'stage-04/04-1-Docker打包与本地运行/starter/app/**'
       - '.github/workflows/04-1-build.yml'
   pull_request:
     paths:
-      - 'se/stage-04/04-1-Docker打包与本地运行/starter/app/**'
+      - 'stage-04/04-1-Docker打包与本地运行/starter/app/**'
       - '.github/workflows/04-1-build.yml'
   workflow_dispatch:
 
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: se/stage-04/04-1-Docker打包与本地运行/starter/app
+        working-directory: stage-04/04-1-Docker打包与本地运行/starter/app
 
     steps:
       - name: 检出仓库
@@ -30,11 +30,11 @@ jobs:
           node-version: 22
 
       - name: 安装前端依赖
-        working-directory: se/stage-04/04-1-Docker打包与本地运行/starter/app/frontend
+        working-directory: stage-04/04-1-Docker打包与本地运行/starter/app/frontend
         run: npm install --no-audit --no-fund
 
       - name: 自动编译 React 页面
-        working-directory: se/stage-04/04-1-Docker打包与本地运行/starter/app/frontend
+        working-directory: stage-04/04-1-Docker打包与本地运行/starter/app/frontend
         run: npm run build
 
       - name: 检查 Compose 配置
