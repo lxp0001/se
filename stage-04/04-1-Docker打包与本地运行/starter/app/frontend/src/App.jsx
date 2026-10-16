@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.replace(/\/+$/, '');
+
 async function request(path, options) {
-  const response = await fetch(`/api${path}`, {
+  if (import.meta.env.MODE === 'github-pages' && !API_BASE_URL) {
+    throw new Error('GitHub Pages 只托管前端；请在仓库变量中配置 VITE_API_BASE_URL 指向公开 API。');
+  }
+
+  const url = API_BASE_URL ? `${API_BASE_URL}${path}` : `/api${path}`;
+  const response = await fetch(url, {
     ...options,
     headers: { 'Content-Type': 'application/json', ...options?.headers },
   });
